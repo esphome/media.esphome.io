@@ -1,0 +1,16 @@
+{
+  "name": "media-esphome-io",
+  "version": "1.0.0",
+  "description": "Static media hosting for ESPHome",
+  "scripts": {
+    "build": "eleventy",
+    "serve": "eleventy --serve",
+    "clean": "rm -rf _site"
+  },
+  "keywords": ["esphome", "media", "static"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@11ty/eleventy": "^2.0.1"
+  }
+}
