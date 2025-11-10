@@ -88,7 +88,7 @@ For example:
 
 ## License
 
-The code for this website is licensed under the MIT License (see [LICENSE](LICENSE)).
+The code for this website is licensed under the Apache License 2.0 (see [LICENSE](LICENSE)).
 
 **Important:** The assets in the `assets/` directory are **NOT** covered by this license. See [assets/LICENSE.md](assets/LICENSE.md) for details on asset licensing.
 
