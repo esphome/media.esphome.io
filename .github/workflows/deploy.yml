@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  pull_request:
   workflow_dispatch:
 
 permissions:
@@ -12,7 +13,7 @@ permissions:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    environment: production
+    environment: ${{ github.event_name != 'pull_request' && github.repository == 'esphome/media.esphome.io' && 'production' || null }}
 
     steps:
       - name: Checkout repository
@@ -31,6 +32,7 @@ jobs:
         run: npm run build
 
       - name: Deploy to Cloudflare R2
+        if: github.event_name != 'pull_request' && github.repository == 'esphome/media.esphome.io'
         uses: ryand56/r2-upload-action@b801a390acbdeb034c5e684ff5e1361c06639e7c # v1.4.0
         with:
           r2-account-id: ${{ secrets.CLOUDFLARE_R2_ACCOUNT_ID }}
