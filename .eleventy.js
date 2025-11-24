@@ -5,6 +5,28 @@ module.exports = function(eleventyConfig) {
   // Copy assets directory contents to root of output
   eleventyConfig.addPassthroughCopy({ "assets": "/" });
 
+  // Configure dev server for SPA-style routing
+  eleventyConfig.setServerOptions({
+    // Middleware to redirect directory requests to index.html
+    middleware: [
+      (req, res, next) => {
+        // Skip if requesting a file with an extension
+        if (path.extname(req.url)) {
+          return next();
+        }
+
+        // For directory paths, serve index.html
+        const indexPath = path.join(__dirname, '_site', 'index.html');
+        const stream = fs.createReadStream(indexPath);
+        stream.on('error', () => {
+          next();
+        });
+        res.setHeader('Content-Type', 'text/html');
+        stream.pipe(res);
+      }
+    ]
+  });
+
   // Add date filter for formatting dates
   eleventyConfig.addFilter("date", (value, format) => {
     const date = value === 'now' ? new Date() : new Date(value);
