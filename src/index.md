@@ -28,10 +28,20 @@ For example:
 <script>
 (function() {
   // Full file tree data from build
-  const fullFileTree = {{ fileTree | dump | safe }};
+  const fullFileTree = {{ fileTree | json | safe }};
+  if (!Array.isArray(fullFileTree)) {
+    console.error('Invalid file tree data');
+    return;
+  }
 
   // Get current path from URL (remove leading/trailing slashes)
   const currentPath = window.location.pathname.replace(/^\/|\/$/g, '');
+
+  // Check if a path exists in the tree
+  function pathExists(tree, path) {
+    if (!path) return true;
+    return tree.some(item => item.path === path || item.path.startsWith(path + '/'));
+  }
 
   // Filter file tree based on current path
   function filterTree(tree, basePath) {
@@ -124,6 +134,11 @@ For example:
     const titleEl = document.getElementById('page-title');
     const headingEl = document.getElementById('files-heading');
 
+    // If any required element is missing, do not proceed
+    if (!container || !titleEl || !headingEl) {
+      return;
+    }
+
     // Update title and heading based on path
     if (basePath) {
       titleEl.textContent = `ESPHome Media: /${basePath}/`;
@@ -138,7 +153,7 @@ For example:
     container.innerHTML = '';
 
     // Build root label
-    const rootLabel = basePath ? `${basePath.split('/').pop()}/` : 'assets/';
+    const rootLabel = basePath ? `${basePath}/` : 'assets/';
     const rootLabelNode = document.createTextNode(`${rootLabel}\n`);
     container.appendChild(rootLabelNode);
 
@@ -151,7 +166,7 @@ For example:
       parentLink.textContent = '..';
       parentLink.addEventListener('click', (e) => {
         e.preventDefault();
-        history.pushState(null, '', parentPath ? `/${parentPath}/` : '/');
+        history.pushState({ path: parentPath }, '', parentPath ? `/${parentPath}/` : '/');
         navigateTo(parentPath);
       });
       // Use ├── if there are other items, └── if empty
@@ -179,13 +194,12 @@ For example:
         const link = document.createElement('a');
         link.href = `/${item.path}/`;
         link.className = 'directory';
-        link.dataset.dir = item.path;
         link.textContent = item.name;
 
         // Add click handler for client-side navigation
         link.addEventListener('click', (e) => {
           e.preventDefault();
-          history.pushState(null, '', `/${item.path}/`);
+          history.pushState({ path: item.path }, '', `/${item.path}/`);
           navigateTo(item.path);
         });
 
@@ -193,6 +207,15 @@ For example:
         container.appendChild(document.createTextNode('\n'));
       }
     });
+
+    // Show a message if no files/directories are found (excluding parent link)
+    if (items.length === 0 && basePath) {
+      if (pathExists(fullFileTree, basePath)) {
+        container.appendChild(document.createTextNode('    (empty directory)\n'));
+      } else {
+        container.appendChild(document.createTextNode('    (directory not found)\n'));
+      }
+    }
   }
 
   // Navigate to a path and update the view
@@ -203,8 +226,8 @@ For example:
   }
 
   // Handle browser back/forward buttons
-  window.addEventListener('popstate', () => {
-    const path = window.location.pathname.replace(/^\/|\/$/g, '');
+  window.addEventListener('popstate', (event) => {
+    const path = event.state?.path ?? window.location.pathname.replace(/^\/|\/$/g, '');
     navigateTo(path);
   });
 
