@@ -41,4 +41,3 @@ jobs:
           r2-bucket: ${{ secrets.CLOUDFLARE_R2_BUCKET }}
           r2-jurisdiction: eu
           source-dir: _site
-          destination-dir: /
