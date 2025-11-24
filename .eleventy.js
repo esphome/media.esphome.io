@@ -36,6 +36,9 @@ module.exports = function(eleventyConfig) {
     return date.toLocaleDateString();
   });
 
+  // Add json filter for serializing objects
+  eleventyConfig.addFilter("json", (obj) => JSON.stringify(obj));
+
   // Add a global data function to get the file tree
   eleventyConfig.addGlobalData("fileTree", () => {
     const assetsDir = path.join(__dirname, 'assets');
