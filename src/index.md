@@ -142,6 +142,25 @@ For example:
     const rootLabelNode = document.createTextNode(`${rootLabel}\n`);
     container.appendChild(rootLabelNode);
 
+    // Add parent directory link when in a subdirectory
+    if (basePath) {
+      const parentPath = basePath.split('/').slice(0, -1).join('/');
+      const parentLink = document.createElement('a');
+      parentLink.href = parentPath ? `/${parentPath}/` : '/';
+      parentLink.className = 'directory';
+      parentLink.textContent = '..';
+      parentLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        history.pushState(null, '', parentPath ? `/${parentPath}/` : '/');
+        navigateTo(parentPath);
+      });
+      // Use ├── if there are other items, └── if empty
+      const prefix = items.length > 0 ? '├── ' : '└── ';
+      container.appendChild(document.createTextNode(prefix));
+      container.appendChild(parentLink);
+      container.appendChild(document.createTextNode('\n'));
+    }
+
     // Add file/directory entries
     items.forEach(item => {
       if (item.prefix) {
