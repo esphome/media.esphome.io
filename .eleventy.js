@@ -17,13 +17,12 @@ module.exports = function(eleventyConfig) {
 
         // For directory paths, serve index.html
         const indexPath = path.join(__dirname, '_site', 'index.html');
-        if (fs.existsSync(indexPath)) {
-          res.setHeader('Content-Type', 'text/html');
-          fs.createReadStream(indexPath).pipe(res);
-          return;
-        }
-
-        next();
+        const stream = fs.createReadStream(indexPath);
+        stream.on('error', () => {
+          next();
+        });
+        res.setHeader('Content-Type', 'text/html');
+        stream.pipe(res);
       }
     ]
   });

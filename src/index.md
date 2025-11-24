@@ -126,35 +126,53 @@ For example:
 
     // Update title and heading based on path
     if (basePath) {
-      titleEl.textContent = 'ESPHome Media: /' + basePath + '/';
-      headingEl.textContent = 'Files in /' + basePath + '/';
+      titleEl.textContent = `ESPHome Media: /${basePath}/`;
+      headingEl.textContent = `Files in /${basePath}/`;
+      document.title = `ESPHome Media: /${basePath}/`;
     } else {
       headingEl.textContent = 'Available Files';
+      document.title = 'ESPHome Media';
     }
 
+    // Clear previous content
+    container.innerHTML = '';
+
     // Build root label
-    const rootLabel = basePath ? basePath.split('/').pop() + '/' : 'assets/';
-    let html = rootLabel + '\n';
+    const rootLabel = basePath ? `${basePath.split('/').pop()}/` : 'assets/';
+    const rootLabelNode = document.createTextNode(`${rootLabel}\n`);
+    container.appendChild(rootLabelNode);
 
+    // Add file/directory entries
     items.forEach(item => {
-      if (item.type === 'file') {
-        const sizeKB = (item.size / 1024).toFixed(2);
-        html += item.prefix + '<a href="/' + item.path + '">' + item.name + '</a> (' + sizeKB + ' KB)\n';
-      } else {
-        html += item.prefix + '<a href="/' + item.path + '/" class="directory" data-dir="' + item.path + '">' + item.name + '</a>\n';
+      if (item.prefix) {
+        container.appendChild(document.createTextNode(item.prefix));
       }
-    });
 
-    container.innerHTML = html;
+      if (item.type === 'file') {
+        const link = document.createElement('a');
+        link.href = `/${item.path}`;
+        link.textContent = item.name;
+        container.appendChild(link);
 
-    // Add click handlers for client-side navigation
-    container.querySelectorAll('a.directory').forEach(link => {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        const newPath = link.dataset.dir;
-        history.pushState(null, '', '/' + newPath + '/');
-        navigateTo(newPath);
-      });
+        const sizeKB = (item.size / 1024).toFixed(2);
+        container.appendChild(document.createTextNode(` (${sizeKB} KB)\n`));
+      } else {
+        const link = document.createElement('a');
+        link.href = `/${item.path}/`;
+        link.className = 'directory';
+        link.dataset.dir = item.path;
+        link.textContent = item.name;
+
+        // Add click handler for client-side navigation
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          history.pushState(null, '', `/${item.path}/`);
+          navigateTo(item.path);
+        });
+
+        container.appendChild(link);
+        container.appendChild(document.createTextNode('\n'));
+      }
     });
   }
 
