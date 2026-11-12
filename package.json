@@ -3,9 +3,11 @@
   "version": "1.0.0",
   "description": "Static media hosting for ESPHome",
   "scripts": {
-    "build": "eleventy",
-    "serve": "eleventy --serve",
-    "clean": "rm -rf _site"
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "serve": "astro dev",
+    "clean": "rm -rf dist"
   },
   "keywords": [
     "esphome",
@@ -14,7 +16,15 @@
   ],
   "author": "Open Home Foundation",
   "license": "Apache-2.0",
+  "dependencies": {
+    "astro": "^7.4.11",
+    "marked": "^18.2.0"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=22.23.4"
+  },
   "devDependencies": {
-    "@11ty/eleventy": "^3.1.8"
+    "@types/node": "^26.6.6"
   }
 }

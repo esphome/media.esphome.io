@@ -4,20 +4,20 @@ Static media hosting for ESPHome websites, code repositories, and related projec
 
 ## Overview
 
-This is a simple static website built with [11ty](https://www.11ty.dev/) that automatically generates a file tree of all assets in the `assets/` directory. All assets are served from the root of the site at https://media.esphome.io.
+This is a simple static website built with [Astro](https://astro.build/) that automatically generates a file tree of all assets in the `assets/` directory. All assets are served from the root of the site at https://media.esphome.io.
 
 ## Features
 
 - **Automatic file tree generation** - Browse all available assets with an interactive tree view
 - **Clickable file links** - Direct links to download or view any asset
 - **License documentation** - Clear licensing information for all hosted assets
-- **Simple build process** - Static site generation with 11ty
+- **Simple build process** - Static site generation with Astro
 
 ## Project Structure
 
 ```
 media.esphome.io/
-├── .eleventy.js          # 11ty configuration
+├── astro.config.mjs      # Astro configuration (assets/ is the public dir)
 ├── package.json          # Node.js dependencies
 ├── assets/               # Media files (merged to root at build)
 │   ├── LICENSE.md        # License information for assets
@@ -25,16 +25,17 @@ media.esphome.io/
 │   ├── made-for-esphome/ # "Made for ESPHome" badges
 │   └── ...
 └── src/                  # Source files
-    ├── index.md          # Homepage (markdown)
-    └── _includes/
-        └── base.njk      # Base HTML template
+    ├── pages/index.astro # Homepage
+    ├── layouts/Base.astro # Base HTML layout
+    ├── lib/fileTree.ts   # Build-time asset tree generator
+    └── scripts/file-browser.ts # Client-side directory browser
 ```
 
 ## Development
 
 ### Prerequisites
 
-- Node.js (v14 or higher)
+- Node.js (v22.23.4 or higher)
 - npm
 
 ### Installation
@@ -51,17 +52,17 @@ Build the static site:
 npm run build
 ```
 
-The built site will be in the `_site/` directory.
+The built site will be in the `dist/` directory.
 
 ### Local Development
 
 Start a local development server with live reload:
 
 ```bash
-npm run serve
+npm run dev
 ```
 
-The site will be available at `http://localhost:8080`.
+The site will be available at `http://localhost:4321`.
 
 ### Cleaning
 
@@ -94,4 +95,4 @@ The code for this website is licensed under the Apache License 2.0 (see [LICENSE
 
 ## Deployment
 
-The `_site/` directory contains the complete static website ready for deployment to any static hosting service (Netlify, Vercel, GitHub Pages, etc.).
+The `dist/` directory contains the complete static website ready for deployment to any static hosting service (Netlify, Vercel, GitHub Pages, etc.).

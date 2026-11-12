@@ -1,0 +1,48 @@
+---
+import Base from '../layouts/Base.astro';
+import fs from 'node:fs';
+import { marked } from 'marked';
+import { buildFileTree } from '../lib/fileTree';
+
+const fileTree = buildFileTree();
+
+// Embed the assets license under this page's own headings (# -> ##, ## -> ###, ...).
+const licensePath = 'assets/LICENSE.md';
+const assetsLicense = fs.existsSync(licensePath)
+  ? await marked.parse(fs.readFileSync(licensePath, 'utf8').replace(/^(#{1,5}) /gm, '#$1 '))
+  : '';
+---
+
+<Base title="ESPHome Media">
+  <h1 id="page-title">ESPHome Media</h1>
+
+  <div id="intro-section">
+    <p>This server hosts static media files for ESPHome websites, code repositories, and related projects.</p>
+
+    <h2>Usage</h2>
+
+    <p>All files in the assets directory are accessible via HTTPS at:</p>
+
+    <p><code>https://media.esphome.io/&lt;path-to-file&gt;</code></p>
+
+    <p>For example:</p>
+    <ul>
+      <li><code>assets/images/logo.png</code> → <code>https://media.esphome.io/images/logo.png</code></li>
+      <li><code>assets/css/styles.css</code> → <code>https://media.esphome.io/css/styles.css</code></li>
+    </ul>
+
+    <Fragment set:html={assetsLicense} />
+  </div>
+
+  <h2><span id="files-heading">Available Files</span></h2>
+
+  <pre class="file-tree" id="file-tree" data-tree={JSON.stringify(fileTree)}></pre>
+
+  <hr />
+
+  <p><em>Powered by <a href="https://astro.build/">Astro</a></em></p>
+</Base>
+
+<script>
+  import '../scripts/file-browser';
+</script>

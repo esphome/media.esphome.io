@@ -2,7 +2,8 @@
 node_modules/
 
 # Build output
-_site/
+dist/
+.astro/
 
 # Debug logs
 npm-debug.log*
