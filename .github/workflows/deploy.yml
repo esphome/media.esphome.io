@@ -17,10 +17,10 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v7.0.1
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6.0.0
+        uses: actions/setup-node@v7.1.0
         with:
           node-version: '20'
           cache: 'npm'
@@ -33,7 +33,7 @@ jobs:
 
       - name: Deploy to Cloudflare R2
         if: github.event_name != 'pull_request' && github.repository == 'esphome/media.esphome.io'
-        uses: ryand56/r2-upload-action@v1.4
+        uses: ryand56/r2-upload-action@v1.5
         with:
           r2-account-id: ${{ secrets.CLOUDFLARE_R2_ACCOUNT_ID }}
           r2-access-key-id: ${{ secrets.CLOUDFLARE_R2_ACCESS_KEY_ID }}
