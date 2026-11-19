@@ -17,8 +17,8 @@
   "author": "Open Home Foundation",
   "license": "Apache-2.0",
   "dependencies": {
-    "astro": "^7.4.11",
-    "marked": "^18.2.0"
+    "astro": "^7.4.12",
+    "marked": "^18.2.1"
   },
   "type": "module",
   "engines": {
